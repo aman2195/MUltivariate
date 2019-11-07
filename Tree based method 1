@@ -23,3 +23,19 @@ min(myoverfittedtree$cptable[,"xerror"])
 mybesttree=rpart(imdb_score~duration+title_year,control = rpart.control(cp=.001))#cp=complexity parameter stop growing tree when rss <.01
 rpart.plot(mybesttree)
 printcp(myoverfittedtree)
+
+####################################################################
+attach(real_estate...Copy)
+mytreehouse=rpart(neighbourhood~property_type+bedrooms+bathrooms+Area+price+Year,cp=.00001)
+rpart.plot(mytreehouse)
+
+mylargetree=rpart(neighbourhood~property_type+bedrooms+bathrooms+Area+price+Year,cp=.0000001)
+rpart.plot(mylargetree)
+printcp(mylargetree)
+plotcp(mylargetree)
+mylargetree$cptable[which.min(mylargetree$cptable[,"xerror"]),"CP"]#best cp table
+
+min(mylargetree$cptable[,"xerror"])
+
+mybesttree1=rpart(neighbourhood~property_type+bedrooms+bathrooms+Area+price+Year,cp=.06)
+rpart.plot(mybesttree1)
