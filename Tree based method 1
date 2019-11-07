@@ -1,0 +1,25 @@
+install.packages("tree")
+install.packages("rpart.plot")
+library(tree)
+library(rpart.plot)
+library(rpart)
+attach(data_IMDB)
+df=data_IMDB
+mytree=rpart(imdb_score~duration+title_year,control = rpart.control(cp=.01))#cp=complexity parameter stop growing tree when rss <.01
+rpart.plot(mytree)
+summary(mytree)
+
+myoverfittedtree=rpart(imdb_score~duration+title_year,control = rpart.control(cp=.0001))#cp=complexity parameter stop growing tree when rss <.01
+rpart.plot(myoverfittedtree)
+
+
+printcp(myoverfittedtree)
+plotcp(myoverfittedtree)
+myoverfittedtree$cptable[which.min(myoverfittedtree$cptable[,"xerror"]),"CP"]#best cp table
+
+min(myoverfittedtree$cptable[,"xerror"])
+
+
+mybesttree=rpart(imdb_score~duration+title_year,control = rpart.control(cp=.001))#cp=complexity parameter stop growing tree when rss <.01
+rpart.plot(mybesttree)
+printcp(myoverfittedtree)
