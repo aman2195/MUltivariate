@@ -1,0 +1,20 @@
+#Local regression
+
+localreg1 = loess(Temperature~Day, span =0.1)
+localreg3 = loess(Temperature~Day, span =0.3)
+localreg5 = loess(Temperature~Day, span =0.5)
+
+plot(Day, Temperature, col="gray")
+lines(sort(Day), predict(localreg1)[order(Day)], col="red", lwd =3)
+lines(sort(Day), predict(localreg3)[order(Day)], col="blue", lwd =3)
+lines(sort(Day), predict(localreg5)[order(Day)], col="dark green", lwd =3)
+
+#Another view
+localreg1 = loess(Temperature~Day, span =0.1)
+localreg3 = loess(Temperature~Day, span =0.3)
+localreg5 = loess(Temperature~Day, span =0.02)
+
+plot(Day, Temperature, col="gray")
+lines(sort(Day), predict(localreg1)[order(Day)], col="red", lwd =3)
+lines(sort(Day), predict(localreg3)[order(Day)], col="blue", lwd =3)
+lines(sort(Day), predict(localreg5)[order(Day)], col="dark green", lwd =3)

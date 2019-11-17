@@ -1,0 +1,33 @@
+#Splines
+
+mont_temp = read.csv("MontrealTemp_test.csv")
+
+attach(mont_temp)
+
+plot(Day, Temperature)
+
+regtemp1 = lm(Temperature~Day)
+plot(Day, Temperature, col = "gray")
+abline(regtemp1, col="red")       #Does not fit
+
+#Try to run polynomial
+# Poly =2
+regtemp2 = lm(Temperature~poly(Day,2))
+plot(Day, Temperature, col = "gray")
+lines(sort(Day), predict(regtemp2)[order(Day)], col="red")       #Does not fit
+
+# Poly =3
+regtemp3 = lm(Temperature~poly(Day,3))
+plot(Day, Temperature, col = "gray")
+lines(sort(Day), predict(regtemp3)[order(Day)], col="red")       #Does not fit
+
+#Splines
+
+library(splines)
+
+lisplinreg = lm(Temperature~bs(Day, knots=c(210, 400, 560), degree=1))
+summary(lisplinreg)
+
+plot(Day, Temperature, col = "gray")
+lines(sort(Day), predict(lisplinreg)[order(Day)], col="red", lwd=5)       #Does not fit
+

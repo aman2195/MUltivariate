@@ -1,0 +1,20 @@
+#-----------------------------------
+#--Quadratic discriminant analysis
+#-----------------------------------
+
+install.packages("MASS")
+install.packages("klaR")
+
+library(MASS)
+library(klaR)
+
+myqda = qda(De~GPA + GMAT)
+myqda
+
+#Predictions
+predict(myqda, data.frame(GPA = 3.3, GMAT = 570))
+predict(myqda, data.frame(GPA = 3.1, GMAT = 660))
+predict(myqda, data.frame(GPA = 2.4, GMAT = 700))
+
+#partition matrix
+partimat(De~GPA + GMAT, method="qda") 

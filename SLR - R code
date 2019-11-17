@@ -1,0 +1,33 @@
+#Regression on how much is an extra bedroom worth
+
+#First step: Understand your data using three functions
+
+#Summary stats
+summary(price)
+summary(bedrooms)
+
+#Box plot
+boxplot(price)
+boxplot(bedrooms)
+
+#Histogram
+
+hist(price)
+hist(bedrooms)
+
+#Visualizing relationships
+
+plot(bedrooms, price)
+
+#For this example, we are not splitting the data into training and test
+#As an example, we are taking only train data
+
+lm_fit = lm(price~bedrooms)
+
+lm_fit
+
+#Visualize the line
+abline(lm_fit, col='red') #Superimposes the predicted line over the scatter plot
+
+confint(lm_model, 'bedrooms', level=0.90)
+visreg(lm.fit, alpha=0.05)

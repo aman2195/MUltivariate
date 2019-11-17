@@ -1,0 +1,76 @@
+setwd("C:/Users/vchan/OneDrive/Desktop/MGSC 661 - Prof Juan Serpa/Session 10_Classification Logistic Regression")
+
+basketball = read.csv("shot_logs.csv")
+
+attach(basketball)
+
+head(basketball)
+colnames(basketball)
+summary(W)
+
+#Dummify the y variable
+SHOT_RESULT = as.factor(SHOT_RESULT)
+table(SHOT_RESULT)
+
+basketball$score = ifelse(SHOT_RESULT=="made", 1, 0)
+attach(basketball)
+table(score)
+plot(SHOT_DIST, score, col="gray")
+
+#linear probability
+lpm= lm(score~SHOT_DIST)
+summary(lpm)
+abline(lpm, col='red')
+
+#Logistic Regression
+logit = glm(score~ SHOT_DIST, family = "binomial")  #specify the family here
+summary(logit)
+
+#----------------------------------------------------------------------------------------
+#Below codes are to understand the math behind logistic regression
+#calculate probabilities at points
+dist=5
+exp(coef(logit)[1] + coef(logit)[2]*dist)/(1+exp(coef(logit)[1] + coef(logit)[2]*dist))
+
+dist=20
+exp(coef(logit)[1] + coef(logit)[2]*dist)/(1+exp(coef(logit)[1] + coef(logit)[2]*dist))
+
+dist=40
+exp(coef(logit)[1] + coef(logit)[2]*dist)/(1+exp(coef(logit)[1] + coef(logit)[2]*dist))
+
+#----------------------------------------------------------------------------------------
+
+#Predictions and plotting
+
+values = data.frame(SHOT_DIST=c(0, 5,20,40,60))
+predict(logit, values, type = "response") #type = response just gives that we need the reponse variable
+
+plot(SHOT_DIST, score, col= "grey", ylim=c(0,1))
+curve(predict(logit, data.frame(SHOT_DIST=x), type="resp"), add=TRUE, col="red")
+
+
+#----------------------------------
+#--Multiple Logistic Regression
+#----------------------------------
+
+mlogit = glm(score~PERIOD + LOCATION + DRIBBLES + SHOT_NUMBER + SHOT_DIST + CLOSE_DEF_DIST, family="binomial")
+summary(mlogit)
+
+value_ruben = data.frame(PERIOD=3, LOCATION="H", DRIBBLES = 5, SHOT_NUMBER=3, SHOT_DIST=20,
+                         CLOSE_DEF_DIST=5)
+
+predict(mlogit, value_ruben, type="response")
+
+value_arthur = data.frame(PERIOD=2, LOCATION="A", DRIBBLES = 2, SHOT_NUMBER=1, SHOT_DIST=5,
+                         CLOSE_DEF_DIST=1)
+
+predict(mlogit, value_arthur, type="response")
+
+#To get Rsquared valur need to use rms package as glm does not have r-squared
+#Check the value of R2 under Discrimination Indexes
+
+install.packages("rms")
+
+require(rms)
+
+mlogit2 = lrm(score~PERIOD + LOCATION + DRIBBLES + SHOT_NUMBER + SHOT_DIST + CLOSE_DEF_DIST)

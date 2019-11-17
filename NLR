@@ -1,0 +1,38 @@
+
+library(car)
+
+setwd("C:/Users/vchan/OneDrive/Desktop/MGSC 661 - Prof Juan Serpa/Session 6")
+real_estate = read.csv("real_estate_lect6.csv")
+attach(real_estate)
+
+head(real_estate)
+colnames(real_estate)
+
+plot(year, price)
+plot(bedrooms, price)
+
+reg1= lm(price~bedrooms + year)
+residualPlots(reg1)
+
+#Since year is non-linear, we run a polynomial function
+
+reg2 = lm(price~bedrooms + poly(year,2))
+
+reg3 = lm(price~bedrooms + poly(year,3))
+
+reg4 = lm(price~bedrooms + poly(year,4))
+
+summary(reg2)
+summary(reg3)
+summary(reg4)
+
+reg2_2 = lm(price~poly(year,2))
+plot(year,price)
+
+lines(sort(year), predict(reg2_2)[order(year)], col="red")
+
+#Run anova test to determine if you want to keep going higher
+
+anova(reg1, reg2, reg3, reg4)
+
+detach(real_estate)

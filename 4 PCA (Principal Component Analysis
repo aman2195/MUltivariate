@@ -1,0 +1,64 @@
+
+
+setwd("C:/Users/vchan/OneDrive/Desktop/MGSC 661 - Prof Juan Serpa/Session 14_Principal Component Analysis")
+getwd()
+
+music_df = read.csv("spotify.csv")
+attach(music_df)
+
+#Divide the quantit
+spotify_vars = music_df[,c(3:11)]
+
+library(car)
+colnames(music_df)
+
+#run principal component analysis
+pca = prcomp(spotify_vars, scale=TRUE)
+
+# If the above does not work
+#pca = prcomp(na.omit(spotify_vars), scale=TRUE)
+
+pca
+#Plot PCA with 2 components
+
+install.packages("ggplot2")
+install.packages("ggfortify")
+library(ggplot2)
+library(ggfortify)
+
+#Plot map
+autoplot(pca, data=spotify_vars, loadings=TRUE, loadings.label = TRUE)
+
+#plot drake
+autoplot(pca, data=spotify_vars, loadings=TRUE, col=ifelse(labels$artist=="Drake","blue","transparent"), loadings.label = TRUE )
+
+autoplot(pca, data = spotify_vars, loadings = TRUE, col=ifelse(labels$artist=="Arcade Fire","blue","transparent"), loadings.label = TRUE )
+
+autoplot(pca, data = spotify_vars, loadings = TRUE, col=ifelse(labels$song_title=="Beat It","blue","transparent"), loadings.label = TRUE )
+
+
+#percentage of variance explained
+
+#number of components vs accuracy
+pve = (pca$sdev^2)/sum(pca$sdev^2)
+par(mfrow=c(1,2))
+plot(pve, ylim=c(0,1))
+plot(cumsum(pve), ylim=c(0,1))
+
+par(mfrow=c(1,1))
+
+#Use PCA to seletc predictors for regression models
+detach(music_df)
+
+imdb_pca = read.csv("IMDB_PCA.csv")
+attach(imdb_pca)
+
+imdb_labels = imdb_pca[,c(1)]
+imdb_var= imdb_pca[,c(2:13)]
+pca_imdb = prcomp(na.omit(imdb_var), scale=TRUE)
+autoplot(pca_imdb, data=na.omit(imdb_var), loadings=TRUE,
+         col="grey", loadings.label=TRUE)
+
+
+
+

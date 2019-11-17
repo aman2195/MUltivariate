@@ -1,0 +1,40 @@
+
+getwd()
+setwd("C:/Users/vchan/OneDrive/Desktop/MGSC 661 - Prof Juan Serpa/Session 13_TreeBasedMethods_2")
+
+install.packages("randomForest")
+library(randomForest)
+
+data = read.csv("IMDB_clean.csv")
+attach(data)
+
+#----------------------------------------------------
+#------------------Random Forest---------------------
+#----------------------------------------------------
+
+myforest = randomForest(imdb_score~ budget + duration + title_year +movie_facebook_likes +
+                           actor_1_facebook_likes + facenumber_in_poster,
+                         ntree=500,  importance= TRUE)
+
+myforest
+
+predict(myforest, data.frame(movie_facebook_likes=10000, budget = 10000000, duration=90,
+                             title_year=2017, actor_1_facebook_likes=2500, facenumber_in_poster=3,
+                             importance=TRUE))
+
+#Relative Predictor Importance
+importance(myforest)
+
+#%IncMSE column tells us that if we remove the predictor, the MSE increases by that %
+
+varImpPlot(myforest)
+#Do not pay attention to IncNodePurity column
+
+#----OOB error-----------
+
+#do.trace is used to track the out of bag error
+#Out of sample performance is given by Mean of squared residuals
+
+randomForest(imdb_score~ budget + duration + title_year +movie_facebook_likes +
+               actor_1_facebook_likes + facenumber_in_poster,
+             ntree=500,  importance= TRUE, do.trace=50)

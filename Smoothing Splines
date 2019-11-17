@@ -1,0 +1,13 @@
+#Smoothing splines
+
+smooth1 = smooth.spline(Day, Temperature, spar= 0.1)
+smooth3 = smooth.spline(Day, Temperature, spar= 0.3)
+smooth7 = smooth.spline(Day, Temperature, spar= 0.7)
+plot(Day, Temperature, col="gray")
+lines(smooth1, col="red", lwd=2)
+lines(smooth3, col="blue", lwd=2)
+lines(smooth7, col="dark green", lwd=3)
+
+smooth1
+smooth3
+smooth7

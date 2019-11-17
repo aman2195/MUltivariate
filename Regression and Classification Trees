@@ -1,0 +1,66 @@
+
+#----------------------------
+#--Tree based Methods
+#----------------------------
+
+#--Set working directory
+setwd("C:/Users/vchan/OneDrive/Desktop/MGSC 661 - Prof Juan Serpa/Session 12_TreeBasedMethods")
+getwd()
+
+#Install libraries
+install.packages("tree")
+install.packages("rpart.plot")
+library(tree)
+library(rpart)
+library(rpart.plot)
+
+#Read data
+data_IMDB = read.csv("data_IMDB.csv")
+attach(data_IMDB)
+
+mytree= rpart(imdb_score~duration + title_year, control= rpart.control(cp=0.01))
+                    #cp is complexity parameter controls the growth of further branches
+
+rpart.plot(mytree)
+
+#Check error of the model
+summary(mytree)
+        #Variable importance gives the weight of importance to the variables
+
+##-----Change complexity-----
+my_overfitted_tree= rpart(imdb_score~duration + title_year, control= rpart.control(cp=0.00001))
+
+rpart.plot(my_overfitted_tree)
+
+plotcp(my_overfitted_tree)
+              #Here, the y-axis is the out of performance error
+
+##-----Find the optimum value of cp#-----
+my_overfitted_tree$cptable[which.min(my_overfitted_tree$cptable[,"xerror"]),"CP"]
+min(my_overfitted_tree$cptable[,"xerror"])
+
+#-----Create the tree with the best cp value----
+my_best_tree= rpart(imdb_score~duration + title_year, control= rpart.control(cp=0.00137674))
+
+rpart.plot(my_best_tree)
+
+printcp(my_best_tree)
+
+detach(data_IMDB)
+
+real_estate = read.csv("real_estate.csv")
+attach(real_estate)
+
+#Classification Trees
+
+mytreehouse = rpart(neighbourhood~property_type + bedrooms + bathrooms + Area + price +Year, cp=0.00001)
+rpart.plot(mytreehouse)
+
+mylargetree = rpart(neighbourhood~property_type + bedrooms + bathrooms + Area + price +Year, cp=0.00000001)
+printcp(mylargetree)
+plotcp(mylargetree)
+mylargetree$cptable[which.min(mylargetree$cptable[,"xerror"]), "CP"]
+
+mybestlargetree = rpart(neighbourhood~property_type + bedrooms + bathrooms + Area + price +Year, cp=0.06097)
+rpart.plot(mybestlargetree)
+

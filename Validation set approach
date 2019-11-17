@@ -1,0 +1,62 @@
+#-------------------------------------------
+#Validation set test method
+#-------------------------------------------
+
+#**************Linear**************
+
+sample= sample.split(real_estate$price, SplitRatio=0.5)   #Use a variable just as anchor, algo treats it as a row number
+train = subset(real_estate, sample== TRUE)
+test = subset(real_estate, sample== FALSE)
+
+plot(area, price, col=ifelse(sample==TRUE, "red", "dark green"), pch=4)
+fit1 = lm(price~area, data=train)
+abline(fit1, col="red", lwd=2)
+
+#MSE calculation
+
+test$pred = predict(fit1, test) #y hat
+test$res = test$price - test$pred   #error
+test$res_sq = test$res**2
+
+mse = mean(test$res_sq)
+mse
+
+#**************Quadratic**************
+
+sample= sample.split(real_estate$price, SplitRatio=0.5)   #Use a variable just as anchor, algo treats it as a row number
+train = subset(real_estate, sample== TRUE)
+test = subset(real_estate, sample== FALSE)
+
+plot(area, price, col=ifelse(sample==TRUE, "red", "dark green"), pch=4)
+fit1 = lm(price~poly(area,2), data=train)
+abline(fit1, col="red", lwd=2)
+
+#MSE calculation
+
+test$pred = predict(fit1, test) #y hat
+test$res = test$price - test$pred   #error
+test$res_sq = test$res**2
+
+mse = mean(test$res_sq)
+mse
+
+#**************10th degree**************
+
+sample= sample.split(real_estate$price, SplitRatio=0.5)   #Use a variable just as anchor, algo treats it as a row number
+train = subset(real_estate, sample== TRUE)
+test = subset(real_estate, sample== FALSE)
+
+plot(area, price, col=ifelse(sample==TRUE, "red", "dark green"), pch=4)
+fit1 = lm(price~poly(area,10), data=train)
+abline(fit1, col="red", lwd=2)
+
+#MSE calculation
+
+test$pred = predict(fit1, test) #y hat
+test$res = test$price - test$pred   #error
+test$res_sq = test$res**2
+
+mse = mean(test$res_sq)
+mse
+
+detach(real_estate)

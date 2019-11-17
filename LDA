@@ -1,0 +1,75 @@
+
+setwd("C:/Users/vchan/OneDrive/Desktop/MGSC 661 - Prof Juan Serpa/Session 11_Linear Discriminant Analysis")
+getwd()
+
+df = read.csv("admit.csv")
+attach(df)
+search()
+detach(df)
+# Rename column GPA
+colnames(df)[1]="GPA"
+
+#Calculate probabilities - Prior
+
+pi_admit = sum(df$De=="admit")/ nrow(df)
+pi_border = sum(df$De=="border")/ nrow(df)
+pi_notadmit = sum(df$De=="notadmit")/ nrow(df)
+
+#plot probability distributions
+
+par(mfrow=c(3,1))
+
+f_admit = hist(df$GPA[df$De=="admit"], col="Green", xlim=c(1.5,4))
+f_borderline = hist(df$GPA[df$De=="border"], col="blue", xlim=c(1.5,4))
+f_notadmit = hist(df$GPA[df$De=="notadmit"], col="red", xlim=c(1.5,4))
+
+par(mfrow=c(1,1))
+
+#Finding the means
+
+mean(df$GPA[df$De=="admit"])
+mean(df$GPA[df$De=="border"])
+mean(df$GPA[df$De=="notadmit"])
+
+#-----------------------------------
+#--Automated discriminant analysis
+#-----------------------------------
+
+install.packages("MASS")
+install.packages("klaR")
+
+library(MASS)
+library(klaR)
+
+#Run LDA
+
+mylda = lda(De~GPA)
+mylda               #Prior probabilities are calculated here in this
+
+#predict
+predict(mylda, data.frame(GPA=3.3))
+predict(mylda, data.frame(GPA=3.1))
+predict(mylda, data.frame(GPA=2.4))
+
+
+#--More than one predictor
+
+mylda2 = lda(De~GPA + GMAT)
+mylda2
+
+#Coefficients are the eigen values
+predict(mylda2, data.frame(GPA = 3.3, GMAT = 570))
+predict(mylda2, data.frame(GPA = 3.1, GMAT = 660))
+predict(mylda2, data.frame(GPA = 2.4, GMAT = 700))
+
+#predict for all
+predict(mylda2)
+
+#partition matrix
+partimat(De~GPA + GMAT, method="lda")     #Average GPA is represented by dots in the regions
+
+                                          #Red colored labels are misclassified data points
+
+
+#As standard deviation is common, the regions are separated by linear lines
+

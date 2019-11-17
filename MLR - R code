@@ -1,0 +1,61 @@
+
+#--------Multiple linear regression
+getwd()
+setwd("C:/Users/vchan/OneDrive/Desktop/MGSC 661 - Prof Juan Serpa/Session 3")
+
+real_estate = read.csv("real_estate_lect3.csv")
+attach(real_estate)
+
+colnames(real_estate)
+
+mreg = lm(price~bedrooms + area +year)
+summary(mreg)
+
+#prediction
+coef(mreg)
+
+coef(mreg)[1] + 7*coef(mreg)[2] + 2500*coef(mreg)[3] + 2008*coef(mreg)[4]
+
+#--Categorical variables
+#house as category =1
+
+levels(property_type)
+table(property_type)
+
+mreg2 = lm(price~bedrooms + property_type)
+
+summary(mreg2)
+coef(mreg2)[3]
+
+#plot
+
+plot(bedrooms, price, col= ifelse(property_type=="house", "red", "blue"))
+
+#house
+abline(coef(mreg2)[1] + coef(mreg2)[3], coef(mreg2)[2], col="red")
+
+#apartment
+abline(coef(mreg2)[1], coef(mreg2)[2], col="blue")
+
+#add legend
+legend("topright", pch = 1, col= c("red","blue"), c("house", "apartment"))
+
+#--Categorical variables with more than 1 value
+
+mreg3 = lm(price~bedrooms +neighbourhood)
+summary(mreg3)
+
+#Change the dummy variable
+
+neighbourhood = relevel(neighbourhood, ref = "Lasalle")
+mreg4 = lm(price~bedrooms + neighbourhood)
+summary(mreg4)
+
+#Interaction variables
+mreg5 = lm(price~bedrooms + property_type + bedrooms*property_type)
+summary(mreg5)
+
+plot(bedrooms, price, col= ifelse(property_type=="house", "red", "blue"))
+abline(coef(mreg5)[1]+ coef(mreg5)[3], coef(mreg5)[4]+ coef(mreg5)[2], col="blue")
+abline(coef(mreg5)[1], coef(mreg5)[2], col="red")
+legend("topright", pch = 1, col= c("red","blue"), c("house", "apartment"))

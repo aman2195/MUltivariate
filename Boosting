@@ -1,0 +1,17 @@
+#----------------------------------------------------
+#---------------------Boosting-----------------------
+#----------------------------------------------------
+
+#Trees learn from each other
+
+install.packages("gbm")
+library(gbm)
+set.seed(1)
+
+boosted= gbm(imdb_score~ budget + duration + title_year + movie_facebook_likes+
+               actor_1_facebook_likes + facenumber_in_poster,
+             distribution= "gaussian", n.trees=10000, interaction.depth=4)
+summary(boosted)
+
+predicted_score = predict(boosted, n.trees=10000)
+mean((predicted_score-imdb_score)^2)

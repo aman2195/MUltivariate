@@ -1,0 +1,122 @@
+getwd()
+setwd("C:/Users/vchan/OneDrive/Desktop/MGSC 661 - Prof Juan Serpa/Session 5")
+
+real_estate = read.csv("real_estate_lect5.csv")
+attach(real_estate)
+
+mreg1 = lm(price~bedrooms + area + property_type)
+summary(mreg1)
+
+#adjusted r squared
+
+#with bedrooms
+mreg2 = lm(price~bedrooms)
+summary(mreg2)
+
+#with bedrooms and area
+mreg3=lm(price~bedrooms+area)
+summary(mreg3)    #improves both r squared and adjusted r squared
+
+#add ID
+
+mreg4= lm(price~bedrooms+ ID)
+summary(mreg4)    #improvement in r squared but adjusted r squared penalizes
+
+
+#***************************************************************
+#----------------------Model selection--------------------------
+#***************************************************************
+
+# We run the model with 3 predictors = 2^3 models in total
+
+#Best selection method
+
+#0 variable
+reg0 = lm(price~1)
+
+#1 variable
+reg1_1 = lm(price~area)
+reg1_2 = lm(price~bedrooms)
+reg1_3 = lm(price~bathrooms)
+
+
+#2 variables
+reg2_1 = lm(price~area + bedrooms)
+reg2_2 = lm(price~bedrooms+ bathrooms)
+reg2_3 = lm(price~area+ bathrooms)
+
+
+#3 variables
+reg3_1 = lm(price~area + bathrooms + bedrooms)
+
+
+#Use ANOVA to run all regressions
+#Shortlist best models from each group
+
+anova(reg0, reg1_1, reg1_2, reg1_3 , reg2_1 , reg2_2 , reg2_3 , reg3_1)
+
+#Compare adj. r squared values of the selected models
+
+summary(reg0)$adj.r.squared
+summary(reg1_2)$adj.r.squared
+summary(reg2_3)$adj.r.squared
+summary(reg3_1)$adj.r.squared
+
+#package for this
+
+install.packages("leaps")
+library(leaps)
+
+sel = regsubsets(price~bedrooms+ bathrooms + area + Levels + year, real_estate)
+summary.sel = summary(sel)
+summary.sel
+
+plot(summary.sel$adjr2, xlab="Number of variables", ylab="Adjusted R^2 value", type="l")
+
+#Select the best model
+which.max(summary.sel$adjr2)
+max(summary.sel$adjr2)
+
+optimal_reg = lm(price~bathrooms+ area+ Levels + year)
+summary(optimal_reg)
+
+#Forward selection method
+M0 = lm(price~1)
+
+reg1_1 = lm(price~bedrooms)
+reg1_2 = lm(price~bathrooms)
+reg1_3 = lm(price~area)
+
+anova(reg1_1, reg1_2 , reg1_3)
+M1 = reg1_1
+
+reg2_1 = lm(price~bedrooms+bathrooms)
+reg2_2= lm (price~bedrooms+area)
+anova(reg2_1, reg2_2)
+M2= reg2_1
+
+M3= lm(price~bedrooms+bathrooms + area)
+
+summary(M0)$adj.r.squared
+summary(M1)$adj.r.squared
+summary(M2)$adj.r.squared
+summary(M3)$adj.r.squared
+
+#Automated way
+selfwd=regsubsets(price~ bedrooms + bathrooms + area+ Levels+ year, real_estate, method="forward")
+summary.selfwd=summary(selfwd)
+summary.selfwd
+plot(summary.selfwd$adjr2, xlab= "Number of variables" , ylab="adj. r squared" , type="l")
+
+which.max(summary.selfwd$adjr2)
+max(summary.selfwd$adjr2)
+
+#Backward selection method
+selbwd=regsubsets(price~ bedrooms + bathrooms + area+ Levels+ year, real_estate, method="backward")
+summary.selbwd=summary(selbwd)
+summary.selbwd
+plot(summary.selbwd$adjr2, xlab= "Number of variables" , ylab="adj. r squared" , type="l")
+
+which.max(summary.selbwd$adjr2)
+max(summary.selbwd$adjr2)
+

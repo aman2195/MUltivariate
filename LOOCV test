@@ -1,0 +1,33 @@
+#-------------------------------------------
+#Leave on out method
+#-------------------------------------------
+
+#LOOCV test
+
+#******Linear*******
+library(boot)
+reglin = glm(price~area, data = real_estate)
+cv.err = cv.glm(real_estate, reglin)$delta[1]
+cv.err
+
+#******Linear*******
+reglin = glm(price~poly(area,2), data = real_estate)
+cv.err = cv.glm(real_estate, reglin)$delta[1]
+cv.err
+
+#******Linear*******
+reglin = glm(price~poly(area,10), data = real_estate)
+cv.err = cv.glm(real_estate, reglin)$delta[1]
+cv.err
+
+#Iterations
+cv.error= rep(0,5)
+
+for (i in 1:5){
+  glm.fit = glm(price~poly(area,i), data = real_estate)
+  cv.error[i]= cv.glm(real_estate, glm.fit)$delta[1]
+}
+
+plot(cv.error, col= "red")
+which.min(cv.error)
+min(cv.error)

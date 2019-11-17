@@ -1,0 +1,86 @@
+
+getwd()
+setwd("C:/Users/vchan/OneDrive/Desktop/MGSC 661 - Prof Juan Serpa/Session 4/")
+
+real_estate = read.csv("real_estate_lect4.csv")
+library(car)
+
+attach(real_estate)
+
+head(real_estate)
+summary(real_estate)
+str(real_estate)
+
+#----------------- Non linearity - Problem 1-------------------
+
+mreg_p1 = lm(price~area+ year+ bathrooms+ bedrooms)
+plot(predict(mreg_p1), residuals(mreg_p1))
+abline(0,0,lty =2 , col="red", lwd=3)
+
+#See patterns in residual plot
+
+residualPlots(mreg_p1)
+
+#Remove year and re-run the model
+
+mreg_p1b = lm(price~area+ bathrooms+ bedrooms)
+plot(predict(mreg_p1b), residuals(mreg_p1b))
+abline(0,0,lty =2 , col="red", lwd=3)
+
+#See patterns in residual plot
+
+residualPlots(mreg_p1b)
+
+#----------------- Heteroskedasticity - Problem 2-------------------
+#variance of residuals increases as x increases
+
+#Check heteroskedasticity
+
+mreg_p2 = lm(price~area + year + bedrooms)
+plot(predict(mreg_p2), residuals(mreg_p2))
+abline(0,0, lwd=3, lty=2, col="red") #cone shaped graph
+
+#ncv test to detect heteroskedasticity
+ncvTest(mreg_p2)
+
+summary(mreg_p2)
+#Remove heteroskedasticity
+
+install.packages("lmtest")
+install.packages("plm")
+library(lmtest)
+library(plm)
+
+coeftest(mreg_p2, vcov = vcovHC(mreg_p2, type="HC1")) #sandwich the errors
+
+#----------------- Outliers - Problem 3-------------------
+
+#Studentized Results
+mreg_p3 = lm(price~ area+ year + bedrooms)
+qqPlot(mreg_p3)
+
+#Bonferroni Test
+outlierTest(mreg_p3)
+
+real_estate2= real_estate[-c(29,74),]
+attach(real_estate2)
+
+mreg_p3_noout= lm(price~area+ year+ bedrooms)
+
+summary(mreg_p3)
+summary(mreg_p3_noout)
+
+#----------------- Collinearity - Problem 4-------------------
+
+install.packages("psych")
+library(psych)
+
+real_estate3 = real_estate[,c(3,6,7,8,9,10,12)]
+pairs.panels(real_estate3)
+
+mreg_p4 = lm(price~bedrooms + bathrooms + area +area_with_garden + Levels + year)
+vif(mreg_p4)
+
+mreg_p5 = lm(price~bedrooms + bathrooms + area + Levels + year)
+vif(mreg_p5)
+

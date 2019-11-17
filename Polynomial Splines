@@ -1,0 +1,27 @@
+#Polynomial spline
+
+poly2splinreg = lm(Temperature~ bs(Day, knots = c(210,400,560), degree=2))
+poly3splinreg = lm(Temperature~ bs(Day, knots = c(210,400,560), degree=3))
+poly4splinreg = lm(Temperature~ bs(Day, knots = c(210,400,560), degree=4))
+
+plot(Day, Temperature, col= "gray")
+lines(sort(Day), predict(linsplinreg)[order(Day)], col="yellow", lwd =3)
+lines(sort(Day), predict(poly2splinreg)[order(Day)], col="red", lwd =3)
+lines(sort(Day), predict(poly3splinreg)[order(Day)], col="blue", lwd =3)
+lines(sort(Day), predict(poly4splinreg)[order(Day)], col="dark green", lwd =3)
+
+#Get percentiles of data
+
+q20 = quantile(Day, c(0.2))
+q40 = quantile(Day, c(0.4))
+q60 = quantile(Day, c(0.6))
+q80 = quantile(Day, c(0.8))
+
+equalspline = lm(Temperature~bs(Day, knots = c(q20, q40, q60, q80), degree = 3))
+
+plot(Day, Temperature, col="gray")
+lines(sort(Day), predict(equalspline)[order(Day)], lwd=3, col="red")
+abline(v=q20, lty=2)
+abline(v=q40, lty=2)
+abline(v=q60, lty=2)
+abline(v=q80, lty=2)
